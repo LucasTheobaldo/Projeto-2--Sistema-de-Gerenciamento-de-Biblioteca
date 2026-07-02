@@ -97,9 +97,10 @@ module.exports = {
         await atualizarAtrasados(db);
         const where = {};
         if (req.usuario.papel === PAPEIS.LEITOR) {
-            where.leitorId = req.usuario.id;
+            const leitor = await db.Leitor.findOne({where: {usuarioId: req.usuario.id}});
+            if (!leitor) return res.status(404).json({erro: 'Perfil de leitor não encontrado'});
+            where.leitorId = leitor.id;
         }
-
         const emprestimos = await db.Emprestimo.findAll({
             where,
             include: [
@@ -111,22 +112,30 @@ module.exports = {
     },
 
     async getById(req, res) {
-        const where = {id: req.params.id};
+        try {
+            await atualizarAtrasados(db);
 
-        if (req.usuario.papel === PAPEIS.LEITOR) {
-            where.leitorId = req.usuario.id;
+            const where = {id: req.params.id};
+            if (req.usuario.papel === PAPEIS.LEITOR) {
+                const leitor = await db.Leitor.findOne({where: {usuarioId: req.usuario.id}});
+                if (!leitor) return res.status(404).json({erro: 'Leitor não encontrado'});
+                where.leitorId = leitor.id;
+            }
+
+            const emprestimo = await db.Emprestimo.findOne({
+                where,
+                include: [
+                    {model: db.Leitor, as: 'leitor', attributes: ['id', 'nome']},
+                    {model: db.Livro, as: 'livro', attributes: ['id', 'titulo']}
+                ]
+            });
+
+            if (!emprestimo) return res.status(404).json({erro: 'Empréstimo não encontrado'});
+            res.status(200).json(emprestimo);
+        } catch (err) {
+            console.error('Erro ao buscar empréstimo:', err);
+            res.status(500).json({erro: 'Erro ao buscar empréstimo'});
         }
-
-        const emprestimo = await db.Emprestimo.findOne({
-            where,
-            include: [
-                {model: db.Leitor, as: 'leitor', attributes: ['id', 'nome']},
-                {model: db.Livro, as: 'livro', attributes: ['id', 'titulo']}
-            ]
-        });
-
-        if (!emprestimo) return res.status(404).json({erro: 'Empréstimo não encontrado'});
-        res.status(200).json(emprestimo);
     },
 
     async search(req, res) {

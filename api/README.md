@@ -1,7 +1,9 @@
-## Como rodar
+## Backend
 
 1. Instale as dependências:
+```bash
    npm install
+```
 
 2. Mude o nome do .env.example para .env, ajuste os valores DB conforme seu PostgreSQL local e crie uma chave JWP:
 

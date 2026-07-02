@@ -1,5 +1,6 @@
 const db = require('../config/db_sequelize');
 const {Op} = require('sequelize');
+const atualizarAtrasados = require('../utils/atualizarAtrasados');
 
 module.exports = {
     async create(req, res) {
@@ -30,8 +31,9 @@ module.exports = {
     },
 
     async list(req, res) {
+        await atualizarAtrasados(db);
         const livros = await db.Livro.findAll({
-            attributes: ['titulo', 'autor', 'editora', 'publicacao', 'categoria', 'isbn', 'total', 'disponivel', 'status']
+            attributes: ['id', 'titulo', 'autor', 'editora', 'publicacao', 'categoria', 'isbn', 'total', 'disponivel', 'status']
         });
         res.status(200).json(livros);
     },
