@@ -1,0 +1,672 @@
+/* ============================================================
+   ACERVO — design tokens
+   Inspired by the physical library: card catalogs, due-date
+   stamps, drawer tabs, and the punch-card texture of index cards.
+   ============================================================ */
+
+:root {
+  /* -- Color: aged paper + library ink -- */
+  --ink: #1c2541;
+  --ink-soft: #3a4266;
+  --ink-muted: #6b7290;
+  --paper: #f1e9d8;
+  --paper-raised: #faf5ea;
+  --paper-line: #d9cba9;
+  --paper-line-strong: #c2b189;
+  --drawer-green: #2f4f3d;
+  --drawer-green-dark: #22392c;
+  --stamp-amber: #b5651d;
+  --stamp-red: #8b2e2e;
+  --stamp-red-bg: #f4e0da;
+  --stamp-green: #3f6b4f;
+  --stamp-green-bg: #e2ead9;
+  --stamp-amber-bg: #f4e6d3;
+
+  /* -- Type -- */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Space Mono", "Courier New", monospace;
+
+  /* -- Layout -- */
+  --sidebar-w: 232px;
+  --radius-card: 3px;
+  --shadow-card: 0 1px 0 var(--paper-line-strong), 0 6px 16px -8px rgba(28, 37, 65, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-line) 1px, transparent 1px);
+  background-size: 100% 32px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  margin: 0 0 0.4em 0;
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+}
+
+button, input, select, textarea {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--stamp-amber);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   App shell
+   ============================================================ */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---- Sidebar: styled as a catalog drawer face ---- */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--drawer-green);
+  color: #ecf1e9;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 20px;
+  position: relative;
+}
+
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--drawer-green-dark);
+}
+
+.brand {
+  padding: 0 24px 24px;
+  border-bottom: 1px solid rgba(236, 241, 233, 0.15);
+  margin-bottom: 12px;
+}
+
+.brand-mark {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+}
+
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b9c9b6;
+  margin-top: 4px;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  color: #d7e2d2;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-left: 3px solid transparent;
+  position: relative;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.nav-tab.active {
+  background: var(--paper);
+  color: var(--ink);
+  border-left: 3px solid var(--stamp-amber);
+}
+
+.nav-tab .tab-index {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.sidebar-footer {
+  padding: 16px 24px 0;
+  border-top: 1px solid rgba(236, 241, 233, 0.15);
+  margin-top: 12px;
+}
+
+.user-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.user-chip .name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.user-chip .role {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9c9b6;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid rgba(236, 241, 233, 0.3);
+  color: #ecf1e9;
+  padding: 7px 12px;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: 100%;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(236, 241, 233, 0.5);
+}
+
+/* ---- Main content ---- */
+.main-area {
+  flex: 1;
+  padding: 36px 44px 60px;
+  max-width: 1180px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stamp-amber);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+}
+
+.page-desc {
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  margin-top: 4px;
+  max-width: 52ch;
+}
+
+/* ============================================================
+   Card — index card motif
+   ============================================================ */
+
+.card {
+  background: var(--paper-raised);
+  border: 1px solid var(--paper-line-strong);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  position: relative;
+}
+
+.card + .card {
+  margin-top: 18px;
+}
+
+.card-punch {
+  position: absolute;
+  top: -6px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid var(--paper-line-strong);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-card);
+  padding: 9px 16px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--ink-soft);
+}
+
+.btn-primary:disabled {
+  background: var(--ink-muted);
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--paper-line-strong);
+  color: var(--ink);
+}
+
+.btn-outline:hover {
+  background: var(--paper-line);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: var(--stamp-red);
+  color: var(--stamp-red);
+}
+
+.btn-danger:hover {
+  background: var(--stamp-red-bg);
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.76rem;
+}
+
+/* ============================================================
+   Forms
+   ============================================================ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: 0.01em;
+}
+
+.field input,
+.field select {
+  border: 1px solid var(--paper-line-strong);
+  background: #fff;
+  border-radius: var(--radius-card);
+  padding: 9px 11px;
+  color: var(--ink);
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--ink-soft);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 16px;
+}
+
+.form-grid .field.span-2 {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.error-banner {
+  background: var(--stamp-red-bg);
+  color: var(--stamp-red);
+  border: 1px solid var(--stamp-red);
+  border-radius: var(--radius-card);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   Table
+   ============================================================ */
+
+.table-wrap {
+  background: var(--paper-raised);
+  border: 1px solid var(--paper-line-strong);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--paper-line-strong);
+  background: var(--paper);
+}
+
+tbody td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--paper-line);
+  font-size: 0.88rem;
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: rgba(28, 37, 65, 0.03);
+}
+
+.cell-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--ink-muted);
+}
+
+.empty-state h3 {
+  font-family: var(--font-display);
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   Stamp badges — the signature element.
+   Mimics the ink rubber-stamp used on due-date cards.
+   ============================================================ */
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(-1.5deg);
+}
+
+.stamp-aberto {
+  color: var(--ink-soft);
+  background: rgba(58, 66, 102, 0.06);
+}
+
+.stamp-devolvido {
+  color: var(--stamp-green);
+  background: var(--stamp-green-bg);
+}
+
+.stamp-atrasado {
+  color: var(--stamp-red);
+  background: var(--stamp-red-bg);
+}
+
+.stamp-ativo {
+  color: var(--stamp-green);
+  background: var(--stamp-green-bg);
+}
+
+.stamp-inativo {
+  color: var(--ink-muted);
+  background: rgba(107, 114, 144, 0.08);
+}
+
+.stamp-disponivel {
+  color: var(--stamp-green);
+  background: var(--stamp-green-bg);
+}
+
+.stamp-indisponivel {
+  color: var(--stamp-red);
+  background: var(--stamp-red-bg);
+}
+
+/* ============================================================
+   Filters bar
+   ============================================================ */
+
+.filters-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  align-items: flex-end;
+}
+
+.filters-bar .field {
+  margin-bottom: 0;
+  min-width: 160px;
+}
+
+/* ============================================================
+   Login page
+   ============================================================ */
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--drawer-green);
+  background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 45%);
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--paper-raised);
+  border-radius: var(--radius-card);
+  box-shadow: 0 20px 60px -20px rgba(0,0,0,0.5);
+  padding: 40px 36px 32px;
+  position: relative;
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 32px;
+  right: 32px;
+  height: 3px;
+  background: var(--stamp-amber);
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-brand .brand-mark {
+  color: var(--ink);
+  font-size: 1.9rem;
+}
+
+.login-brand .brand-sub {
+  color: var(--ink-muted);
+}
+
+.login-hint {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--paper-line-strong);
+  font-size: 0.76rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.login-hint code {
+  font-family: var(--font-mono);
+  background: var(--paper);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Utility
+   ============================================================ */
+
+.text-muted {
+  color: var(--ink-muted);
+}
+
+.spinner-text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  padding: 40px 0;
+  text-align: center;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 37, 65, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 24px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--paper-raised);
+  border-radius: var(--radius-card);
+  box-shadow: 0 24px 70px -20px rgba(0,0,0,0.5);
+  padding: 28px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px;
+}
+
+.icon-btn:hover {
+  color: var(--ink);
+}
+
+@media (max-width: 860px) {
+  .app-shell {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
+  .main-area {
+    padding: 24px 18px 40px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
